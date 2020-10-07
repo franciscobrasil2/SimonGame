@@ -10,46 +10,56 @@ var gamePattern = [];
 // array with colors
 buttonColours = ["red", "blue", "green", "yellow"];
 
-
+var myLoopRunning = false;
 
 
 
 // keep track of the keypress, if keypress length = 1 then get random button, animate random button and play its sound
-gameStarted = false;
-$("body").keypress(function() {
+var gameStarted = false;
+$(".startbutton").click(function() {
   if(!gameStarted) {
     $("body").removeClass("gameover");
     nextSequence();
     gameStarted = true;
+    $(".startbutton").css("display", "none");
   }
 });
 
 
 
 // playsound when button is clicked
-counter = 0;
-$(".btn").click(function() {
 
-  //I think the two lines below should be inside first if
-  var userChosenColour = this.id;
-  userClickedPattern.push(userChosenColour);
-  if (gameStarted === true) {
+var counter = 0;
+$(".btn").click(function() {
+  if (gameStarted && !myLoopRunning) {
+    var userChosenColour = this.id;
+    userClickedPattern.push(userChosenColour);
     if(userClickedPattern[counter] === gamePattern[counter] && counter < level) {
     playSound(this.id);
     animatePress("#" + this.id);
     counter++;
       if (counter == level) {
-      nextSequence();
-      counter = 0;
-      userClickedPattern = [];
+        myLoopRunning = true;
+        setTimeout(function() {
+          $("body").addClass("bodyNextLevel");
+          $("h1").text("Good Job - Next Level");
+          playSound("levelup");
+          setTimeout(function() {
+            $("body").removeClass("bodyNextLevel");
+            nextSequence();
+          }, 2000);
+        }, 700);
+       counter = 0;
+       userClickedPattern = [];
       }
     }
 
     else {
-      $("h1").text("Game Over - Press A key to try again");
+      $("h1").text("Game Over - Press the button to try again");
       $("body").addClass("gameover");
-      var gameoverSound = new Audio("sounds/wrong.mp3");
-      gameoverSound.play();
+      playSound("wrong");
+      $(".startbutton").css("display", "inline-block");
+      $(".startbutton").text("Try Again");
       gameStarted = false;
       level = 0;
       counter = 0;
@@ -74,6 +84,7 @@ function nextSequence() {
 
 var myloopCount = 0;
 function myLoop(functionInput) {
+
   setTimeout(function() {
     playSound(gamePattern[myloopCount]);
     animatePress("#" + gamePattern[myloopCount]);
@@ -83,8 +94,9 @@ function myLoop(functionInput) {
     }
     else {
       myloopCount = 0;
+      myLoopRunning = false;
     }
-  }, 1500)
+  }, 900)
 };
 
 // function Play Sound
