@@ -65,6 +65,7 @@ $(".btn").click(function() {
       counter = 0;
       userClickedPattern = [];
       gamePattern = [];
+      myloopCount = 0;
     }
   }
 });
@@ -93,7 +94,7 @@ function myLoop(functionInput) {
       myLoop();
     }
     else {
-      myloopCount = 0;
+      //myloopCount = 0;
       myLoopRunning = false;
     }
   }, 900)
